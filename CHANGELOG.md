@@ -5,18 +5,8 @@
 ## [Unreleased]
 
 ### Spring Core
-- fix: Do not report `@Autowired` members of `@ContextConfiguration` test classes as not being a Spring bean
-
-### Spring Web
-- fix: Register the web additional-beans discoverer under the extension namespace that declares the extension point, so framework-provided web beans such as `WebApplicationContext` are resolved again
-- fix: Resolve `MockMvc` and `WebTestClient` autowired in tests as beans provided by test auto-configuration
-
-## 262.34.101 - 2026-08-18
-
-### Spring Core
 - fix: Keep renamed Spring Boot run configurations linked without ambiguous fallback (#229) (#279)
 - fix: Keep Kotlin top-level `main()` projects linked when the stored run configuration name no longer exists (#229)
-- fix: Restore Spring project links when a run configuration is renamed or replaced outside the IDE, such as by a version-control update (#229)
 - fix: Hide the Beans Search Everywhere tab outside Spring Boot projects without blocking EDT (#233) (#240) (#279)
 - fix: Anchor inherited autowired inspection problems (#234) (#241)
 - fix: Prevent cyclic inherited-autowiring traversal from hanging inspection analysis (#279)
@@ -47,7 +37,6 @@
 - fix: Resolve Kotlin `const val` package names in component-scan annotations
 - fix: Resolve `@Value` placeholder keys whose default is a SpEL or nested placeholder expression, such as `${my.key:#{null}}`
 - fix: Resolve property keys consumed only from a dependency module (#276)
-- fix: Stop resolving PSI in the Spring Boot toolbar action update, which caused multi-second action-update delays
 
 ### Spring Data
 - fix: Fail closed on stale PSI in SQL injector (#235) (#242)
@@ -68,8 +57,10 @@
 - docs: Update README and plugin description
 - docs: Update issue/PR templates and contributing guide
 - docs: Add AI Agent documentation
+- chore: Support IntelliJ Platform 2026.2 (262)
+- fix: Replace internal plugin-manager APIs with `PluginDetailsService` to unblock 2026.2 plugin verification
 
-## 261.33.80 - 2026-04-28
+## [261.33.80] - 2026-04-28
 
 ### Spring Core
 - feat: 261 spring boot support (#217)

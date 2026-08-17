@@ -16,7 +16,6 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunManagerListener
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 
@@ -76,9 +75,7 @@ class ExplytRunManagerListener(val project: Project) : RunManagerListener {
         val danglingSettings = outdatedSettings.filter { isDanglingName(it.runConfigurationName) }
         if (danglingSettings.isEmpty()) return
 
-        val mainFilePath = runReadActionBlocking {
-            configuration.mainClass?.containingFile?.virtualFile?.canonicalPath
-        } ?: return
+        val mainFilePath = configuration.mainClass?.containingFile?.virtualFile?.canonicalPath ?: return
         val linked = nativeSettings.getLinkedProjectSettings(mainFilePath)
             ?.takeIf { it in danglingSettings }
             ?: return
