@@ -71,7 +71,7 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
         elements: MutableList<out PsiElement>,
         result: MutableCollection<in LineMarkerInfo<*>>
     ) {
-        if (PluginIds.SPRING_JB.isEnabledWithUltimate()) return
+        if (PluginIds.SPRING_JB.isEnabled()) return
         super.collectSlowLineMarkers(elements, result)
     }
 
@@ -134,7 +134,7 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
      * Consulted only where a marker would actually be produced: an element rejected by the cheap
      * UAST checks above yields nothing either way.
      */
-    private fun isSuppressedByJetBrainsSpring() = PluginIds.SPRING_JB.isEnabledWithUltimate()
+    private fun isSuppressedByJetBrainsSpring() = PluginIds.SPRING_JB.isEnabled()
 
     /**
      * Only the declared parameter type is read here: the marker is created on a highlighting hot path, while the
