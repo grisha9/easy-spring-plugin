@@ -14,12 +14,12 @@
     </extensionPoints>
 
     <applicationListeners>
-        <listener class="com.explyt.base.ActionBreadcrumbListener"
-                  topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>
+        <!--<listener class="com.explyt.base.ActionBreadcrumbListener"
+                  topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>-->
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <errorHandler implementation="com.explyt.base.SentryErrorReporter"/>
+        <!--<errorHandler implementation="com.explyt.base.MyErrorReporter"/>-->
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

@@ -60,9 +60,6 @@ version = fun(): String {
     return "${ideaPlatformVersion}.${rootProject.ext["pluginVersion"]}.${ext["snapshotVersion"]}"
 }.invoke()
 
-// Single source of truth for the Sentry release name: prints the resolved plugin
-// version (e.g. "261.33.58"). The release CI consumes this to create the matching
-// Sentry release; it must equal SentryReporter's options.release at runtime.
 val resolvedPluginVersion = version.toString()
 tasks.register("printPluginVersion") {
     // Capture as a local val so the configuration cache serializes the String
