@@ -9,7 +9,7 @@
         <localInspection language="UAST"
                          shortName="SpringSecurityAnnotationWithUserDetailsInspection"
                          groupBundle="messages.SpringSecurityBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.security.notifications"
                          bundle="messages.SpringSecurityBundle"
                          key="explyt.spring.security.inspection.bean"

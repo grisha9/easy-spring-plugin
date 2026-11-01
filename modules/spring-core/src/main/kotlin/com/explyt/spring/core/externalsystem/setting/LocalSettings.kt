@@ -14,7 +14,7 @@ import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalS
 import com.intellij.openapi.project.Project
 
 @Service(Service.Level.PROJECT)
-@State(name = "SpringBootNativeLocalSettings", storages = [Storage(StoragePathMacros.CACHE_FILE)])
+@State(name = "EasySpringNativeLocalSettings", storages = [Storage(StoragePathMacros.CACHE_FILE)])
 class LocalSettings(project: Project) : AbstractExternalSystemLocalSettings<LocalSettings.NativeLocalState>(
     Constants.SYSTEM_ID, project, NativeLocalState()
 ) {

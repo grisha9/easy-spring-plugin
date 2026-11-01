@@ -6,6 +6,7 @@
 package com.explyt.spring.web.editor.openapi
 
 import com.explyt.spring.web.SpringWebBundle
+import com.explyt.spring.web.SpringWebClasses
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.util.registry.Registry
@@ -123,7 +124,7 @@ class OpenApiProxyRequestHandler : HttpRequestHandler() {
         val url = request.headers()[OpenApiUtils.OPENAPI_ORIGINAL_URL] ?: request.uri()
 
         Notification(
-            "com.explyt.spring.notification.web",
+            SpringWebClasses.NOTIFICATION_GROUP_ID_WEB,
             SpringWebBundle.message("explyt.spring.web.notifications"),
             SpringWebBundle.message(
                 "explyt.spring.web.error",

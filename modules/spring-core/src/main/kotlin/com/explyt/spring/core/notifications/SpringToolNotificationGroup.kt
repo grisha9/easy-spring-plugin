@@ -8,6 +8,8 @@ package com.explyt.spring.core.notifications
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 
+const val NOTIFICATION_GROUP_ID = "com.easy.spring.notification"
+
 val SpringToolNotificationGroup: NotificationGroup by lazy {
-    NotificationGroupManager.getInstance().getNotificationGroup("com.explyt.spring.notification")
+    NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID)
 }
