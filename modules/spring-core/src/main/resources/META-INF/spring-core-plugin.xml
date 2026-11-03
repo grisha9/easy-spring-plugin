@@ -60,7 +60,7 @@
         <externalSystemUnlinkedProjectAware
                 implementation="com.explyt.spring.core.externalsystem.process.UnlinkedProjectAware"/>
         <!--WARNING id should be equals Constants.SYSTEM_ID.readableName -->
-        <toolWindow id="Explyt Spring" anchor="right"
+        <toolWindow id="Easy Spring" anchor="right"
                     icon="com/explyt/spring/core/icons/springToolWindow.svg"
                     factoryClass="com.explyt.spring.core.externalsystem.view.SpringBootToolWindowFactory"/>
         <projectImportProvider
@@ -68,7 +68,7 @@
         <projectOpenProcessor
                 implementation="com.explyt.spring.core.externalsystem.process.SpringBootProjectOpenProcessor"/>
         <!--WARNING id should be equals Constants.SYSTEM_ID.readableName -->
-        <externalSystemViewContributor id="Explyt Spring"
+        <externalSystemViewContributor id="Easy Spring"
                                        implementation="com.explyt.spring.core.externalsystem.view.SpringBootExternalSystemViewContributor"/>
         <externalSystemDependencyAnalyzer
                 implementation="com.explyt.spring.core.externalsystem.analyzer.BeanAnalyzerExtension"/>
@@ -76,7 +76,7 @@
                 implementation="com.explyt.spring.core.externalsystem.process.CacheTrackerDataService"/>
         <!--Spring Boot External System-->
 
-        <notificationGroup id="com.explyt.spring.notification"
+        <notificationGroup id="com.easy.spring.notification"
                            displayType="BALLOON"
                            bundle="messages.SpringCoreBundle"
                            key="explyt.spring.common.notifications"/>
@@ -168,7 +168,7 @@
         <localInspection language="UAST"
                          shortName="SpringInjectionAutowiringInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.bean.autowired"
@@ -179,7 +179,7 @@
         <localInspection language="UAST"
                          shortName="SpringBoot3ConfigPropertiesAutowiredInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.boot"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.boot3.configprops.autowired"
@@ -190,7 +190,7 @@
         <localInspection language="UAST"
                          shortName="ExplytEventListenerInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.method.eventListener"
@@ -201,7 +201,7 @@
         <localInspection language="UAST"
                          shortName="SpringComponentScanInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.method.componentScan"
@@ -212,7 +212,7 @@
         <localInspection language="UAST"
                          shortName="SpringLookupBeanInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.bean.lookup"
@@ -223,7 +223,7 @@
         <localInspection language="UAST"
                          shortName="SpringDependsOnBeanInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.bean.dependsOn"
@@ -234,7 +234,7 @@
         <localInspection language="UAST"
                          shortName="SpringAliasBothInterchangeableSetInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.alias.key"
@@ -245,7 +245,7 @@
         <localInspection language="UAST"
                          shortName="SpringUnknownAliasMethodInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.alias.attribute"
@@ -256,7 +256,7 @@
         <localInspection language="UAST"
                          shortName="SpringAliasNotMetaAnnotatedInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.alias.annotation"
@@ -267,7 +267,7 @@
         <localInspection language="UAST"
                          shortName="SpringUnknownBeanMethodInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.bean.method"
@@ -278,7 +278,7 @@
         <localInspection language="UAST"
                          shortName="SpringConfigurationProxyBeanMethodsInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.configuration"
@@ -289,7 +289,7 @@
         <localInspection language="Properties"
                          shortName="SpringPropertiesInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.boot"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.properties.key"
@@ -299,7 +299,7 @@
         <localInspection language="yaml"
                          shortName="SpringYamlInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.boot"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.yaml.key"
@@ -309,7 +309,7 @@
         <localInspection language="Properties"
                          shortName="EnableAutoConfigureSpringFactoryInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.boot"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.autoconfigure"
@@ -319,7 +319,7 @@
         <localInspection language="UAST"
                          shortName="SpringConditionalOnEmptyValueInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.conditionalOnProperty.empty"
@@ -330,7 +330,7 @@
         <localInspection language="UAST"
                          shortName="SpringConditionalOnWrongPlacementInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.conditionalOn.wrongPlacement"
@@ -340,7 +340,7 @@
 
         <localInspection language="UAST"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.property.resource.ref"
@@ -350,7 +350,7 @@
 
         <localInspection language="UAST"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.method.same.class"
@@ -360,7 +360,7 @@
 
         <localInspection language="UAST"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.property.source.classpath"
@@ -369,7 +369,7 @@
                          implementationClass="com.explyt.spring.core.inspections.SpringPropertySourceClasspathInspection"/>
         <localInspection language="UAST"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.property.source.file"
@@ -379,7 +379,7 @@
 
         <localInspection language="UAST"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.context.configuration.classpath"
@@ -388,7 +388,7 @@
                          implementationClass="com.explyt.spring.core.inspections.SpringContextConfigurationClasspathInspection"/>
         <localInspection language="UAST"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.context.configuration.file"
@@ -399,7 +399,7 @@
         <localInspection language="UAST"
                          shortName="SpringProfileWrongPlacementInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.profile.wrongPlacement"
@@ -410,7 +410,7 @@
         <localInspection language="UAST"
                          shortName="SpringProfileAnnotationInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.profile"
@@ -421,7 +421,7 @@
         <localInspection language="UAST"
                          shortName="SpringMetaAnnotationWithoutRuntimeInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.retention"
@@ -432,7 +432,7 @@
         <localInspection language="JSON"
                          shortName="SpringMetadataPropertyInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.boot"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.metadata.config.key"
@@ -442,7 +442,7 @@
         <localInspection language="UAST"
                          shortName="SpringAsyncReturnTypeInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.async"
@@ -453,7 +453,7 @@
         <localInspection language="UAST"
                          shortName="SpringCacheableAnnotationInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.cacheable"
@@ -463,7 +463,7 @@
         <localInspection language="UAST"
                          shortName="SpringConfigurationPropertiesInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.config.properties"
@@ -473,7 +473,7 @@
         <localInspection language="UAST"
                          shortName="SpringConfigurationPropertiesContextInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.config.properties.context"
@@ -483,7 +483,7 @@
         <localInspection language="UAST"
                          shortName="SpringKotlinObjectInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.kotlin.object"
@@ -494,7 +494,7 @@
         <localInspection language="UAST"
                          shortName="SpringInterfaceCacheAnnotationsInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.cache.interface.class"
@@ -505,7 +505,7 @@
         <localInspection language="UAST"
                          shortName="SpringConfigurationPropertiesNullableParametersInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.kotlin.constructor.nullable"
@@ -516,7 +516,7 @@
         <localInspection language="UAST"
                          shortName="SpringConfigurationPropertiesConstructorBindingInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.kotlin.constructor.binding.redundant"
@@ -527,7 +527,7 @@
         <localInspection language="UAST"
                          shortName="SpringValueAnnotationInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.value"
@@ -538,7 +538,7 @@
         <localInspection language="UAST"
                          shortName="SpringScheduledInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.scheduled"
@@ -549,7 +549,7 @@
         <localInspection language="UAST"
                          shortName="SpringKotlinInternalBeanInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.kotlin.internal"
@@ -560,7 +560,7 @@
         <localInspection language="UAST"
                          shortName="SpringEntityScanInspection"
                          groupBundle="messages.SpringCoreBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy Spring"
                          groupKey="explyt.spring.common.notifications.core"
                          bundle="messages.SpringCoreBundle"
                          key="explyt.spring.inspection.entity.scan"
@@ -573,14 +573,14 @@
         <postStartupActivity implementation="com.explyt.spring.core.statistic.StatisticStartupActivity"/>
 
         <configurationType
-                id="Spring Boot"
+                id="Easy Spring Boot"
                 implementation="com.explyt.spring.core.runconfiguration.SpringBootConfigurationType"/>
 
         <runConfigurationProducer
                 order="first"
                 implementation="com.explyt.spring.core.runconfiguration.SpringBootConfigurationProducer"/>
 
-        <groupConfigurable id="com.explyt.spring.group"
+        <groupConfigurable id="com.easy.spring.group"
                            parentId="tools"
                            displayNameKey="configurable.group.com.explyt.spring.group.settings.display.name"
                            descriptionKey="configurable.group.com.explyt.spring.group.settings.description"
@@ -589,7 +589,7 @@
         <!--WARNING key should be equals Constants.SYSTEM_ID.readableName -->
         <applicationConfigurable id="com.explyt.spring.runConfigurations"
                                  key="run.configuration.spring.boot.display.name"
-                                 groupId="com.explyt.spring.group"
+                                 groupId="com.easy.spring.group"
                                  bundle="messages.SpringCoreBundle"
                                  instance="com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationConfigurable"
                                  groupWeight="85"/>
@@ -710,7 +710,7 @@
                      description="Update statistic interval seconds"/>
         <registryKey key="explyt.spring.agent.path" defaultValue=""
                      description="Custom path for agent jar"/>
-        <registryKey key="EXPLYTSPRINGBOOT.system.in.process" defaultValue="true"
+        <registryKey key="EASYSPRINGNATIVE.system.in.process" defaultValue="true"
                      description="Whether IDEA should use 'in-process' mode for interaction with plugin api"/>
         <intentionAction>
             <language>yaml</language>

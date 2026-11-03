@@ -21,7 +21,6 @@ val allCompileProjects = listOf(
     "spring-security",
     "spring-web",
     "spring-cloud",
-    "spring-initializr",
     "spring-integration",
     "spring-messaging",
     "spring-aop",
@@ -41,10 +40,6 @@ fun Project.optProperty(prop: String): String? {
     return null
 }
 
-if (!hasProperty("snapshotVersion")) {
-    ext["snapshotVersion"] = "SNAPSHOT"
-}
-
 version = fun(): String {
     if (rootProject.hasProperty("buildVersion")) {
         val bv = rootProject.property("buildVersion") as String
@@ -57,7 +52,7 @@ version = fun(): String {
         return bv
     }
     val ideaPlatformVersion = "${rootProject.ext["sinceVersion"]}".substring(0, 3)
-    return "${ideaPlatformVersion}.${rootProject.ext["pluginVersion"]}.${ext["snapshotVersion"]}"
+    return "${ideaPlatformVersion}.${rootProject.ext["pluginVersion"]}"
 }.invoke()
 
 val resolvedPluginVersion = version.toString()
@@ -68,7 +63,7 @@ tasks.register("printPluginVersion") {
     doLast { println(versionToPrint) }
 }
 
-val springPluginName = "spring-tool"
+val springPluginName = "easy-spring"
 ext["springPluginName"] = springPluginName
 
 val distFilePostfix = rootProject.optProperty("distFilePostfix") ?: version
@@ -164,7 +159,7 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         version.set(springBootstrapModule.version as String)
-        description.set(rootProject.file("PLUGIN-DESCRIPTION.md").readText()
+        description.set(rootProject.file("README.md").readText()
             .let { org.jetbrains.changelog.markdownToHTML(it) })
         changeNotes.set(provider {
             changelog.renderItem(
@@ -218,7 +213,7 @@ changelog {
     path.set(rootProject.file("CHANGELOG.md").canonicalPath)
     header.set(provider { "[${version.get()}] - ${date()}" })
     introduction.set(
-        rootProject.file("PLUGIN-DESCRIPTION.md").readText()
+        rootProject.file("README.md").readText()
     )
     itemPrefix.set("-")
     keepUnreleasedSection.set(true)

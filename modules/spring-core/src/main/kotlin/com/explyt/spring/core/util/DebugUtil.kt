@@ -5,6 +5,7 @@
 
 package com.explyt.spring.core.util
 
+import com.explyt.spring.core.notifications.NOTIFICATION_GROUP_ID
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
@@ -18,7 +19,7 @@ object DebugUtil {
         val currentSession = XDebuggerManager.getInstance(project).currentSession
         if (!SpringCoreUtil.isExplytDebug(project) || currentSession?.currentStackFrame == null) {
             Notification(
-                "com.explyt.spring.notification",
+                NOTIFICATION_GROUP_ID,
                 "No active stopped break point",
                 NotificationType.WARNING
             ).notify(null)

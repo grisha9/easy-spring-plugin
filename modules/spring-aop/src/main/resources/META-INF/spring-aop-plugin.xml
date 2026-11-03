@@ -13,7 +13,7 @@
         <localInspection language="UAST"
                          shortName="SpringAopAnnotationInspection"
                          groupBundle="messages.SpringAopBundle"
-                         groupPath="Explyt Spring"
+                         groupPath="Easy spring"
                          groupKey="explyt.spring.aop.notifications"
                          bundle="messages.SpringAopBundle"
                          key="explyt.spring.inspection.aop"
