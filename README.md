@@ -2,7 +2,7 @@
 
 A lightweight fork of the [Spring plugin for IntelliJ IDEA](https://github.com/explyt/spring-plugin), maintained at [grisha9/spring-plugin](https://github.com/grisha9/spring-plugin).
 
-This fork is based on the original project by [explyt](https://github.com/explyt/spring-plugin). It is not affiliated with or endorsed by the upstream maintainers.
+This fork is based on the original project by [explyt](https://github.com/explyt/spring-plugin).
 
 ## Goals
 
