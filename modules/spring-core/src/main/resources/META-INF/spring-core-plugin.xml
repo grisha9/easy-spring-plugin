@@ -76,7 +76,7 @@
                 implementation="com.explyt.spring.core.externalsystem.process.CacheTrackerDataService"/>
         <!--Spring Boot External System-->
 
-        <notificationGroup id="com.explyt.spring.notification"
+        <notificationGroup id="com.easy.spring.notification"
                            displayType="BALLOON"
                            bundle="messages.SpringCoreBundle"
                            key="explyt.spring.common.notifications"/>
@@ -580,7 +580,7 @@
                 order="first"
                 implementation="com.explyt.spring.core.runconfiguration.SpringBootConfigurationProducer"/>
 
-        <groupConfigurable id="com.explyt.spring.group"
+        <groupConfigurable id="com.easy.spring.group"
                            parentId="tools"
                            displayNameKey="configurable.group.com.explyt.spring.group.settings.display.name"
                            descriptionKey="configurable.group.com.explyt.spring.group.settings.description"
@@ -589,7 +589,7 @@
         <!--WARNING key should be equals Constants.SYSTEM_ID.readableName -->
         <applicationConfigurable id="com.explyt.spring.runConfigurations"
                                  key="run.configuration.spring.boot.display.name"
-                                 groupId="com.explyt.spring.group"
+                                 groupId="com.easy.spring.group"
                                  bundle="messages.SpringCoreBundle"
                                  instance="com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationConfigurable"
                                  groupWeight="85"/>

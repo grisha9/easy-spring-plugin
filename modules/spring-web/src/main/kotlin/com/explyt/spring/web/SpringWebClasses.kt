@@ -89,6 +89,7 @@ object SpringWebClasses {
     const val OPEN_FEIGN_CLIENT_CONFIG = "spring.cloud.openfeign.client.config"
 
     const val ROUTER_DSL_GENERIC_METHOD = "method"
+    const val NOTIFICATION_GROUP_ID_WEB = "com.easy.spring.notification.web"
 
     /**
      * Route methods of the Kotlin router DSL. `method` carries its verb in the argument instead of the name, so a

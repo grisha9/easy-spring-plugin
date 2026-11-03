@@ -253,8 +253,7 @@
         <httpRequestHandler implementation="com.explyt.spring.web.editor.openapi.OpenApiProxyRequestHandler"/>
         <httpRequestHandler implementation="com.explyt.spring.web.editor.openapi.OpenApiOAuth2RedirectRequestHandler"/>
 
-        <!--todo-->
-        <notificationGroup id="com.explyt.spring.notification.web"
+        <notificationGroup id="com.easy.spring.notification.web"
                            displayType="BALLOON"
                            bundle="messages.SpringWebBundle"
                            key="explyt.spring.web.notifications"/>

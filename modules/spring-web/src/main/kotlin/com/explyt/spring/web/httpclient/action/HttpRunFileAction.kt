@@ -9,6 +9,7 @@ import com.explyt.spring.core.externalsystem.utils.Constants
 import com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationConfigurable
 import com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationsSettingsState
 import com.explyt.spring.web.SpringWebBundle.message
+import com.explyt.spring.web.SpringWebClasses
 import com.explyt.spring.web.httpclient.HttpFileState
 import com.explyt.spring.web.httpclient.HttpFileStateService
 import com.intellij.execution.ExecutionManager
@@ -71,7 +72,7 @@ class HttpRunFileAction : AnAction(AllIcons.Actions.Execute) {
             val httpFileState = HttpFileStateService.getInstance().getOrCreateState(file.toNioPath())
             if (httpClipPath.isNullOrEmpty()) {
                 Notification(
-                    "com.explyt.spring.notification.web",
+                    SpringWebClasses.NOTIFICATION_GROUP_ID_WEB,
                     message("explyt.spring.http.cli.empty"),
                     NotificationType.WARNING
                 ).addAction(NotificationAction.create(message("explyt.spring.http.cli.empty.setup")) { _ ->
@@ -81,7 +82,7 @@ class HttpRunFileAction : AnAction(AllIcons.Actions.Execute) {
             }
             if (!SpringToolRunConfigurationConfigurable.shellScriptEnabled()) {
                 Notification(
-                    "com.explyt.spring.notification.web",
+                    SpringWebClasses.NOTIFICATION_GROUP_ID_WEB,
                     message("explyt.spring.http.shell.disabled"),
                     NotificationType.WARNING
                 ).addAction(

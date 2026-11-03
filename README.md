@@ -17,6 +17,6 @@ This fork focuses on a few clear priorities:
 - Less unnecessary complexity.
 - The main goal is the Pareto principle.
 - Faster startup and lower overhead where possible.
-- Hand-written, focused changes over generated filler.
+- Handwritten, focused changes over generated filler.
 
 ## Building from source

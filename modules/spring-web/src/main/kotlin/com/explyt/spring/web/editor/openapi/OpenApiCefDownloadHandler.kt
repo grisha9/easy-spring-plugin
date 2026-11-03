@@ -5,6 +5,7 @@
 
 package com.explyt.spring.web.editor.openapi
 
+import com.explyt.spring.web.SpringWebClasses
 import com.intellij.ide.actions.RevealFileAction
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
@@ -47,7 +48,7 @@ class OpenApiCefDownloadHandler : CefDownloadHandlerAdapter() {
         if (downloadItem?.isComplete == true) {
             val file = File(downloadItem.fullPath)
             Notification(
-                "com.explyt.spring.notification.web",
+                SpringWebClasses.NOTIFICATION_GROUP_ID_WEB,
                 "Download completed successfully",
                 NotificationType.INFORMATION
             )
