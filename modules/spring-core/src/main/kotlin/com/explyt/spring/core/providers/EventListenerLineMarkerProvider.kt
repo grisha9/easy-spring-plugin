@@ -25,6 +25,7 @@ import com.explyt.util.ExplytPsiUtil.isMetaAnnotatedBy
 import com.explyt.util.ExplytPsiUtil.isPublic
 import com.explyt.util.ExplytPsiUtil.isStatic
 import com.explyt.util.ExplytPsiUtil.resolvedPsiClass
+import com.explyt.util.ModuleUtil
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
@@ -34,9 +35,8 @@ import com.intellij.codeInsight.navigation.impl.PsiTargetPresentationRenderer
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Iconable
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil
 import com.intellij.platform.backend.presentation.TargetPresentation
@@ -44,26 +44,14 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import com.intellij.psi.util.*
+import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.InheritanceUtil
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.base.psi.getLineNumber
 import org.jetbrains.uast.*
 import java.util.*
-
-private class MethodArgumentClasses(val element: PsiMethod, psiClassesFromAnnotation: Set<PsiClass>? = null) {
-    var argumentClasses: Set<PsiClass> = emptySet()
-    var argumentType: PsiType? = null
-
-    init {
-        if (element.parameterList.parametersCount == 1) {
-            argumentType = element.parameterList.parameters[0].type
-        } else if (psiClassesFromAnnotation != null) {
-            argumentClasses += psiClassesFromAnnotation
-        }
-    }
-}
-
-private val PROJECT_WIDE_LISTENER_METHODS =
-    Key.create<CachedValue<Collection<MethodArgumentClasses>>>("explyt.spring.event.listeners.projectWide")
 
 class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
     override fun collectSlowLineMarkers(
@@ -203,33 +191,26 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
         }
         val eventPsiClassByAnnotation = getPsiClassesByAnnotationCached(psiMethod)
 
-        val methodArgumentTypes = getMethodArgumentTypes(module)
+        val methodArgumentTypes = findMethodArgumentTypesProject(module)
+        val methodArgumentTypesLibrary = findMethodArgumentTypesLibrary(module)
         val publishCalls = getPublishMethodCalls(methodArgumentTypes, eventPsiType, eventPsiClassByAnnotation)
-        return publishCalls + libraryPublishedEventDeclarations(
-            module, eventPsiType, eventPsiClassByAnnotation, methodArgumentTypes
+        val libraryCalls = getPublishMethodCallsLibrary(
+            module, methodArgumentTypes + methodArgumentTypesLibrary, eventPsiType, eventPsiClassByAnnotation
         )
+        return publishCalls + libraryCalls
     }
 
-    /**
-     * Spring and its ecosystem publish their own events from inside a jar, and a library sources root is
-     * outside every module scope, so no reference search can reach those calls: the event declaration is the
-     * only target that can be offered.
-     *
-     * An event is attributed to a library publisher only when the project itself never publishes it. That
-     * keeps the real call for an application event extending a library base, for a library event the
-     * application raises on its own, and for anything Spring wrapped in `PayloadApplicationEvent`. The check
-     * is per event class, because one listener can declare several via `@EventListener(classes = ...)`.
-     */
-    private fun libraryPublishedEventDeclarations(
+    private fun getPublishMethodCallsLibrary(
         module: Module,
+        methodArgumentTypes: List<MethodCallArgumentTypes>,
         eventPsiType: PsiType?,
         eventPsiClassByAnnotation: Set<PsiClass>,
-        methodArgumentTypes: List<MethodCallArgumentTypes>
     ): List<PsiElement> {
         val applicationEvent =
             LibraryClassCache.searchForLibraryClass(module, APPLICATION_EVENT) ?: return emptyList()
-        val fileIndex = ProjectFileIndex.getInstance(module.project)
         val eventClasses = eventPsiClassByAnnotation + listOfNotNull(eventPsiType?.resolveBeanPsiClass)
+        val project = eventClasses.firstOrNull()?.project ?: return emptyList()
+        val fileIndex = ProjectRootManager.getInstance(project).fileIndex
         return eventClasses
             .filter { it.isEqualOrInheritor(applicationEvent) }
             .filter { it.containingFile?.virtualFile?.let(fileIndex::isInLibrary) == true }
@@ -239,13 +220,6 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
             .map { it.navigationElement }
     }
 
-    /**
-     * The event classes a listener method declares through `@EventListener(classes = ...)`.
-     *
-     * Resolved in the method's own module, which is derived from the method inside the provider: the platform keeps
-     * the provider of the first call for the lifetime of the holder, so a module passed in by the caller - the
-     * initiating module of a project-wide search - would freeze that caller's module into every later answer.
-     */
     private fun getPsiClassesByAnnotationCached(psiMethod: PsiMethod): Set<PsiClass> {
         return CachedValuesManager.getCachedValue(psiMethod) {
             val project = psiMethod.project
@@ -258,7 +232,7 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
     }
 
     private fun getPsiClassesByAnnotation(psiMethod: PsiMethod): Set<PsiClass> {
-        val module = ModuleUtilCore.findModuleForPsiElement(psiMethod) ?: return emptySet()
+        val module = ModuleUtil.findByPsiElement(psiMethod) ?: return emptySet()
         val metaHolder = SpringSearchService.getInstance(module.project).getMetaAnnotations(module, EVENT_LISTENER)
         val uMethod = psiMethod.toUElementOfType<UMethod>() ?: return emptySet()
         val annotationValues = metaHolder.getAnnotationValues(uMethod, setOf("value", "classes"))
@@ -303,6 +277,41 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
             .toList()
     }
 
+    private fun findMethodArgumentTypesProject(module: Module): List<MethodCallArgumentTypes> {
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+            val publishMethods = getPublishMethods(module)
+            val publishMethodTypes = publishMethods.asSequence()
+                .flatMap {
+                    MethodReferencesSearch
+                        .search(it, GlobalSearchScope.projectScope(module.project), true)
+                }
+                .mapNotNull { toMethodCallArgumentTypes(it) }
+                .toList()
+
+            CachedValueProvider.Result(
+                publishMethodTypes,
+                ModificationTrackerManager.getInstance(module.project).getUastModelAndLibraryTracker()
+            )
+        }
+    }
+
+    private fun findMethodArgumentTypesLibrary(module: Module): List<MethodCallArgumentTypes> {
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+            val publishMethods = getPublishMethods(module)
+            val publishMethodTypes = publishMethods.asSequence()
+                .flatMap {
+                    MethodReferencesSearch
+                        .search(it, ModuleUtil.getOnlyLibrarySearchScope(module), true)
+                }
+                .mapNotNull { toMethodCallArgumentTypes(it) }
+                .toList()
+
+            CachedValueProvider.Result(
+                publishMethodTypes, ModificationTrackerManager.getInstance(module.project).getLibraryTracker()
+            )
+        }
+    }
+
     private fun toMethodCallArgumentTypes(it: PsiReference): MethodCallArgumentTypes? {
         val uCallExpression = it.element.toUElement()?.getParentOfType<UCallExpression>() ?: return null
         val argumentType = uCallExpression.getArgumentForParameter(0)?.getExpressionType() ?: return null
@@ -328,61 +337,47 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
 
     private fun findEventListeners(psiElement: PsiElement): Collection<PsiElement> {
         StatisticService.getInstance().addActionUsage(StatisticActionId.GUTTER_TARGET_EVENT_LISTENER)
-        val elementModule = ModuleUtilCore.findModuleForPsiElement(psiElement)
-        val module = elementModule
-            ?: findLibraryOwnerModule(psiElement)
-            ?: return Collections.emptyList()
+        val module = ModuleUtil.findByPsiElement(psiElement) ?: return Collections.emptyList()
         val uCallExpression = psiElement.toUElementOfType<UCallExpression>() ?: return Collections.emptyList()
         if (uCallExpression.valueArgumentCount != 1) return Collections.emptyList()
         val eventPsiType = uCallExpression.valueArguments[0].getExpressionType() ?: return Collections.emptyList()
 
-        return listenerMethods(module, anchoredInLibrary = elementModule == null).asSequence()
+        return listenerMethods(module).asSequence()
             .filter { isEqualsTypeOrClass(it, eventPsiType) }
             .map { it.element.navigationElement }
             .toList()
     }
 
     /**
-     * A call inside a library belongs to no module: the platform answers with whichever attached module sorts
-     * first by dependency order, so that module's dependency closure is an arbitrary slice of the project and
-     * would hide listeners declared in sibling modules. Only an element that really belongs to a module can be
-     * searched through that module.
+     * Listeners are searched project-wide rather than through the module's dependency closure: a call inside a
+     * library resolves to an arbitrary attached module, and a listener may live in a module that only depends on
+     * the publisher's one. Listeners shipped in the module's libraries are cached separately, so that source
+     * edits do not repeat the library search.
      */
-    private fun listenerMethods(module: Module, anchoredInLibrary: Boolean): Collection<MethodArgumentClasses> {
-        if (!anchoredInLibrary) {
-            return getMethodsByApplicationEventCached(module) + getMethodsByEventListenerCached(module)
-        }
-        return CachedValuesManager.getManager(module.project).getCachedValue(
-            module, PROJECT_WIDE_LISTENER_METHODS, {
-                val scope = GlobalSearchScope.projectScope(module.project)
-                CachedValueProvider.Result.create(
-                    getMethodsByApplicationEvent(module, scope) + getMethodsByEventListener(module, scope),
-                    ModificationTrackerManager.getInstance(module.project).getUastModelAndLibraryTracker()
-                )
-            }, false
-        )
+    private fun listenerMethods(module: Module): Collection<MethodArgumentClasses> {
+        return getProjectListenerMethodsCached(module) + getLibraryListenerMethodsCached(module)
     }
 
-    private fun getMethodsByApplicationEventCached(module: Module): Collection<MethodArgumentClasses> {
-        val cacheManager = CachedValuesManager.getManager(module.project)
-
-        return cacheManager.getCachedValue(module) {
+    private fun getProjectListenerMethodsCached(module: Module): Collection<MethodArgumentClasses> {
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
             CachedValueProvider.Result.create(
-                getMethodsByApplicationEvent(module, GlobalSearchScope.moduleWithDependenciesScope(module)),
+                getListenerMethods(module, GlobalSearchScope.projectScope(module.project)),
                 ModificationTrackerManager.getInstance(module.project).getUastModelAndLibraryTracker()
             )
         }
     }
 
-    private fun getMethodsByEventListenerCached(module: Module): Collection<MethodArgumentClasses> {
-        val cacheManager = CachedValuesManager.getManager(module.project)
-
-        return cacheManager.getCachedValue(module) {
+    private fun getLibraryListenerMethodsCached(module: Module): Collection<MethodArgumentClasses> {
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
             CachedValueProvider.Result.create(
-                getMethodsByEventListener(module, GlobalSearchScope.moduleWithDependenciesScope(module)),
-                ModificationTrackerManager.getInstance(module.project).getUastModelAndLibraryTracker()
+                getListenerMethods(module, ModuleUtil.getOnlyLibrarySearchScope(module)),
+                ModificationTrackerManager.getInstance(module.project).getLibraryTracker()
             )
         }
+    }
+
+    private fun getListenerMethods(module: Module, scope: GlobalSearchScope): List<MethodArgumentClasses> {
+        return getMethodsByApplicationEvent(module, scope) + getMethodsByEventListener(module, scope)
     }
 
     private fun getMethodsByApplicationEvent(module: Module, scope: GlobalSearchScope): List<MethodArgumentClasses> {
@@ -409,10 +404,6 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
         return methodArguments
     }
 
-    /**
-     * Spring invokes a listener when the published event is assignable to what it declares - the declared type is
-     * the event or one of its supertypes, never a subtype of it.
-     */
     private fun isEqualsTypeOrClass(methodArgumentClasses: MethodArgumentClasses, eventPsiType: PsiType): Boolean {
         val argumentType = methodArgumentClasses.argumentType
         val argumentClasses = methodArgumentClasses.argumentClasses
@@ -428,3 +419,17 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
     private class MethodCallArgumentTypes(val element: UCallExpression, val argumentType: PsiType)
 
 }
+
+private class MethodArgumentClasses(val element: PsiMethod, psiClassesFromAnnotation: Set<PsiClass>? = null) {
+    var argumentClasses: Set<PsiClass> = emptySet()
+    var argumentType: PsiType? = null
+
+    init {
+        if (element.parameterList.parametersCount == 1) {
+            argumentType = element.parameterList.parameters[0].type
+        } else if (psiClassesFromAnnotation != null) {
+            argumentClasses += psiClassesFromAnnotation
+        }
+    }
+}
+
