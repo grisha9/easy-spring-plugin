@@ -5,13 +5,12 @@
 
 package com.explyt.plugin
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
 import com.intellij.openapi.extensions.PluginId
 
 //todo remove
 enum class PluginIds(val pluginId: String) {
-    EXPLYT("com.explyt.test"),
     HTTP_CLIENT_JB("com.jetbrains.restClient"),
     SPRING_JB("com.intellij.spring"),
     SPRING_DATA_JB("com.intellij.spring.data"),
@@ -19,13 +18,12 @@ enum class PluginIds(val pluginId: String) {
     SPRING_DEBUGGER_JB("com.intellij.spring.debugger"),
     CDI_JB("com.intellij.cdi"), //Jakarta EE - DI (QUARKUS SEXPLYT Conflict)
     SPRING_BOOT_JB("com.intellij.spring.boot"),
+    SH_JB("com.jetbrains.sh"),
     ;
 
-    fun findEnabled() = PluginManager.getInstance().findEnabledPlugin(PluginId.getId(pluginId))
+    fun isEnabled() = !isNotEnabled()
 
-    fun isEnabled() = findEnabled() != null
-
-    fun isNotEnabled() = !isEnabled()
+    fun isNotEnabled() = PluginManagerCore.isDisabled(PluginId.getId(pluginId))
 }
 
 enum class PluginSqlLanguage(val langId: String) {

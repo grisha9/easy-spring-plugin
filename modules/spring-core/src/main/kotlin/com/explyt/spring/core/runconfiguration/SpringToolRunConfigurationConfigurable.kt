@@ -6,6 +6,7 @@
 package com.explyt.spring.core.runconfiguration
 
 //import org.intellij.plugins.intelliLang.inject.InjectedLanguage
+import com.explyt.plugin.PluginIds
 import com.explyt.spring.core.SpringCoreBundle.message
 import com.explyt.spring.core.action.UastModelTrackerInvalidateAction
 import com.explyt.spring.core.externalsystem.utils.Constants
@@ -14,7 +15,6 @@ import com.explyt.spring.core.statistic.StatisticActionId
 import com.explyt.spring.core.statistic.StatisticService
 import com.explyt.spring.core.util.ZipDownloader
 import com.intellij.ide.impl.ProjectUtil
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageUtil
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -22,7 +22,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.observable.properties.GraphProperty
 import com.intellij.openapi.observable.properties.PropertyGraph
@@ -64,7 +63,7 @@ class SpringToolRunConfigurationConfigurable : SearchableConfigurable {
     private val isJavaAgentModeBind = propertyGraph.property(false)
     private val httpCliPathBind = propertyGraph.property("")
     private val sqlLanguageIdModel = CollectionComboBoxModel(getAvailableLanguages())
-    private val shellScriptEnabledProperty: AtomicBooleanProperty = AtomicBooleanProperty(shellScriptEnabled())
+    private val shellScriptEnabledProperty: AtomicBooleanProperty = AtomicBooleanProperty(PluginIds.SH_JB.isEnabled())
     private val downloadEnabled: AtomicBooleanProperty = AtomicBooleanProperty(true)
     private val downloadShow: AtomicBooleanProperty = AtomicBooleanProperty(settingsState.httpCliPath.isNullOrEmpty())
 
@@ -264,11 +263,7 @@ class SpringToolRunConfigurationConfigurable : SearchableConfigurable {
     }
 
     companion object {
-        const val ID = "com.explyt.spring.runConfigurations"
-
-        fun shellScriptEnabled(): Boolean {
-            return PluginManager.getInstance().findEnabledPlugin(PluginId.getId("com.jetbrains.sh")) != null
-        }
+        const val ID = "com.easy.spring.runConfigurations"
     }
 }
 
