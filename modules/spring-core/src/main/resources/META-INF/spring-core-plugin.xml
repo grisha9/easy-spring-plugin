@@ -587,7 +587,7 @@
                            bundle="messages.SpringCoreBundle"/>
 
         <!--WARNING key should be equals Constants.SYSTEM_ID.readableName -->
-        <applicationConfigurable id="com.explyt.spring.runConfigurations"
+        <applicationConfigurable id="com.easy.spring.runConfigurations"
                                  key="run.configuration.spring.boot.display.name"
                                  groupId="com.easy.spring.group"
                                  bundle="messages.SpringCoreBundle"

@@ -6,7 +6,6 @@
 package com.explyt.spring.core.providers
 
 import com.explyt.base.LibraryClassCache
-import com.explyt.plugin.PluginIds
 import com.explyt.spring.core.SpringCoreBundle
 import com.explyt.spring.core.SpringCoreClasses.APPLICATION_EVENT
 import com.explyt.spring.core.SpringCoreClasses.APPLICATION_LISTENER
@@ -71,7 +70,6 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
         elements: MutableList<out PsiElement>,
         result: MutableCollection<in LineMarkerInfo<*>>
     ) {
-        if (PluginIds.SPRING_JB.isEnabledWithUltimate()) return
         super.collectSlowLineMarkers(elements, result)
     }
 
@@ -85,7 +83,6 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
             if (isMethodModifierForEvent(psiMethod) &&
                 (isEventListenerMethod(psiMethod) || isApplicationEventMethod(psiMethod))
             ) {
-                if (isSuppressedByJetBrainsSpring()) return
                 val builder = NavigationGutterIconBuilder.create(
                     SpringIcons.EventPublisher,
                     SpringCoreBundle.message("explyt.spring.gutter.group.event.publisher")
@@ -109,7 +106,6 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
                 val sourceElement = uCallExpression.methodIdentifier.sourcePsiElement
                 if (sourceElement != null && sourcePsi != null
                 ) {
-                    if (isSuppressedByJetBrainsSpring()) return
                     val builder = NavigationGutterIconBuilder.create(
                         SpringIcons.EventListener,
                         SpringCoreBundle.message("explyt.spring.gutter.group.event.listener")
@@ -125,16 +121,6 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
             }
         }
     }
-
-    /**
-     * [collectNavigationMarkers] is also reached directly by `RelatedItemLineMarkerGotoAdapter`
-     * (Navigate | Related Symbol), bypassing [collectSlowLineMarkers], so the JetBrains Spring
-     * suppression has to be repeated per element and cannot be moved to the batch entry point only.
-     *
-     * Consulted only where a marker would actually be produced: an element rejected by the cheap
-     * UAST checks above yields nothing either way.
-     */
-    private fun isSuppressedByJetBrainsSpring() = PluginIds.SPRING_JB.isEnabledWithUltimate()
 
     /**
      * Only the declared parameter type is read here: the marker is created on a highlighting hot path, while the
@@ -274,9 +260,13 @@ class EventListenerLineMarkerProvider : RelatedItemLineMarkerProvider() {
     private fun getPsiClassesByAnnotation(psiMethod: PsiMethod): Set<PsiClass> {
         val module = ModuleUtilCore.findModuleForPsiElement(psiMethod) ?: return emptySet()
         val metaHolder = SpringSearchService.getInstance(module.project).getMetaAnnotations(module, EVENT_LISTENER)
-        val annotationValues = metaHolder.getAnnotationMemberValues(psiMethod, setOf("value", "classes"))
-        return annotationValues
-            .mapNotNullTo(mutableSetOf()) { (it.toUElement() as? UClassLiteralExpression)?.type?.resolvedPsiClass }
+        val uMethod = psiMethod.toUElementOfType<UMethod>() ?: return emptySet()
+        val annotationValues = metaHolder.getAnnotationValues(uMethod, setOf("value", "classes"))
+        val toSet = annotationValues.asSequence()
+            .filterIsInstance<UClassLiteralExpression>()
+            .mapNotNull { it.type?.resolvedPsiClass }
+            .toSet()
+        return toSet
     }
 
     private fun getPublishMethods(module: Module): List<PsiMethod> {

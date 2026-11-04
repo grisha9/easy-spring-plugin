@@ -63,7 +63,7 @@ class SpringToolRunConfigurationConfigurable : SearchableConfigurable {
     private val isJavaAgentModeBind = propertyGraph.property(false)
     private val httpCliPathBind = propertyGraph.property("")
     private val sqlLanguageIdModel = CollectionComboBoxModel(getAvailableLanguages())
-    private val shellScriptEnabledProperty: AtomicBooleanProperty = AtomicBooleanProperty(shellScriptEnabled())
+    private val shellScriptEnabledProperty: AtomicBooleanProperty = AtomicBooleanProperty(PluginIds.SH_JB.isEnabled())
     private val downloadEnabled: AtomicBooleanProperty = AtomicBooleanProperty(true)
     private val downloadShow: AtomicBooleanProperty = AtomicBooleanProperty(settingsState.httpCliPath.isNullOrEmpty())
 
@@ -263,9 +263,7 @@ class SpringToolRunConfigurationConfigurable : SearchableConfigurable {
     }
 
     companion object {
-        const val ID = "com.explyt.spring.runConfigurations"
-
-        fun shellScriptEnabled(): Boolean = PluginIds.SH_JB.isEnabled()
+        const val ID = "com.easy.spring.runConfigurations"
     }
 }
 

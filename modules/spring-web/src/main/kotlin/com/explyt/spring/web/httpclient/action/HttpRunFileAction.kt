@@ -5,8 +5,8 @@
 
 package com.explyt.spring.web.httpclient.action
 
+import com.explyt.plugin.PluginIds
 import com.explyt.spring.core.externalsystem.utils.Constants
-import com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationConfigurable
 import com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationsSettingsState
 import com.explyt.spring.web.SpringWebBundle.message
 import com.explyt.spring.web.SpringWebClasses
@@ -80,7 +80,7 @@ class HttpRunFileAction : AnAction(AllIcons.Actions.Execute) {
                 }).notify(project)
                 return
             }
-            if (!SpringToolRunConfigurationConfigurable.shellScriptEnabled()) {
+            if (PluginIds.SH_JB.isNotEnabled()) {
                 Notification(
                     SpringWebClasses.NOTIFICATION_GROUP_ID_WEB,
                     message("explyt.spring.http.shell.disabled"),
