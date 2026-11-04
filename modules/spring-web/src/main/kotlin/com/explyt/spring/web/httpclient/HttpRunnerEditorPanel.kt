@@ -5,7 +5,6 @@
 
 package com.explyt.spring.web.httpclient
 
-import com.explyt.plugin.PluginIds
 import com.explyt.spring.web.httpclient.action.EnvironmentalAddFileAction
 import com.explyt.spring.web.httpclient.action.EnvironmentalRemoveFileAction
 import com.explyt.spring.web.httpclient.action.HttpRunFileAction
@@ -31,7 +30,7 @@ class HttpRunnerEditorPanelProvider : EditorNotificationProvider {
         project: Project, file: VirtualFile
     ): Function<FileEditor, HttpRunnerEditorPanel>? {
         return if (file.name.endsWith(".http") || file.name.endsWith(".rest")) {
-            if (ScratchUtil.isScratch(file) && PluginIds.HTTP_CLIENT_JB.isEnabled()) return null
+            if (ScratchUtil.isScratch(file)) return null
             Function { fileEditor: FileEditor -> HttpRunnerEditorPanel(fileEditor, project) }
         } else null
     }
