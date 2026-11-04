@@ -2,35 +2,9 @@
 
 # Explyt Spring Changelog
 
-# Spring Plugin — Lightweight Fork
-
-A lightweight fork of the [Spring plugin for IntelliJ IDEA](https://github.com/explyt/spring-plugin), maintained at [grisha9/spring-plugin](https://github.com/grisha9/spring-plugin).
-
-This fork is based on the original project by [explyt](https://github.com/explyt/spring-plugin). It is not affiliated with or endorsed by the upstream maintainers.
-
-## Goals
-
-This fork focuses on a few clear priorities:
-
-- **Lightweight** — keep the plugin small, and unobtrusive in the IDE.
-- **Simple and fast** — simple implementation and only the essential core functionality.
-- **Minimal AI slop** — avoid unnecessary AI-generated boilerplate, noise, and over-engineered code. Changes should be intentional, readable, and reviewed.
-
-## What this means in practice
-
-- Less unnecessary complexity.
-- The main goal is the Pareto principle.
-- Faster startup and lower overhead where possible.
-- Handwritten, focused changes over generated filler.
-
-## Building from source
-
 ## [Unreleased]
 
-## [262.1.1] - 2026-11-03
-
 ### Spring Core
-
 - fix: Stop the bundled YAML inspection from reporting `The type of value is 'boolean' while other values use type 'string'` in Spring configuration files: it compares the YAML scalar types of the same key across list items, so `enabled: true` next to `enabled: "${FLAG:false}"` was flagged although Spring converts both to the declared `Boolean`. The value is still validated against the property type by the Spring YAML inspection (#492)
 - fix: Stop reporting "Spring meta-annotation should have RUNTIME RetentionPolicy" on a Kotlin annotation class that is retained at runtime — with `@Retention(AnnotationRetention.RUNTIME)` or with no `@Retention` at all, whose Kotlin default is `RUNTIME`: the policy was compared as reference text with `RetentionPolicy.RUNTIME`, which the Kotlin light class does not carry, so every Kotlin composed annotation such as a custom `@ConditionalOnProperty` was an error. The policy is now resolved to its enum constant, a Kotlin annotation meta-annotated by another Kotlin annotation is checked through it as in Java, and meta-annotation cycles no longer recurse forever (#490)
 - fix: Navigate a configuration key more than one level below a collection index or a map entry to the member that binds it: `providers[0].models.free.model-info.model-name` stopped at `providers[0].models`, because the key part after the index was looked up as one member name in the element class. Every segment is now walked the way the binder does — a member of an object, an index into a collection or array, a key of a map, in any nesting order — in YAML and `.properties` files, for Java beans, Kotlin classes and records alike; a map key resolves to its map member (#471)
@@ -55,6 +29,7 @@ This fork focuses on a few clear priorities:
 - fix: Resolve `management.endpoint.<id>.access`, `.enabled` and `.cache.time-to-live` of an Actuator endpoint declared in a dependency module — endpoint discovery searched only the configuration module's own sources, so a shared starter's endpoint was reported as an unresolved key and had no navigation (#382)
 - fix: Count a configuration key used through `@ConditionalOnProperty`, `Environment.getProperty` or `DynamicPropertyRegistry` as referenced when it is defined in several configuration files: the reference's single-target resolve returned nothing for two or more definitions, so every file defining the key reported "Cannot resolve key property" (#118)
 - fix: Do not report a configuration value as invalid when the metadata hint that declares its closed value set allows other values: the check was gated on the `<prefix>.keys` hint while validating against `<prefix>.values`, so `logging.level.root=INFO` was an error even though the `logging.level.values` hint declares provider `any` — and a property with only a `.keys` hint was told its value `must be one of []` (#385)
+- feat: Link a Gradle `bootRun` run configuration in Native Context Mode: selecting one no longer hides the Load Beans action, its module and main class resolve from the task prefix, and its environment variables and VM options travel into the launched application — previously only Java/Kotlin/Spring Boot configurations could be linked, so a project whose launcher is Gradle started without its profile and environment (#376)
 - fix: Navigate from a list-element key nested under a map entry, so `app.publishers."[my.registration]".routes[0].payload-type` in properties and its index-less YAML form resolve to the element type's member: map-value members are not declared as configuration properties, so the key remainder is now walked level by level — map value type, its list property, the element type (#396)
 - fix: Navigate from a map-entry or list-element member key to a constructor-bound property — a Kotlin `val` in a data class or a Java record component — instead of only to JavaBean setters, which constructor-bound classes do not have (#384)
 - fix: Navigate from a map-entry key written in Spring's bracket notation, so `app.publishers."[my.registration]".owner-application` in YAML and `app.publishers[my.registration].owner-application` in properties resolve to the map declaration and the declaring member instead of breaking on the dots inside the brackets (#383)
@@ -115,11 +90,9 @@ This fork focuses on a few clear priorities:
 - fix: Event publisher navigation not working for child class if EvenListener has parent class (#419)
 
 ### Spring Initializr
-
 - fix: Make `gradlew` and `mvnw` executable in a project generated through Spring Initializr, so the first `./gradlew` in a terminal no longer fails with "permission denied" (#60)
 
 ### Spring Web
-
 - feat: List the built-in Actuator endpoints - `health`, `info`, `env`, `metrics` and the others the actuator libraries declare - next to the ones the project declares, in the Endpoints tool window, URL references and endpoint usages, at `management.endpoints.web.base-path` with `path-mapping` applied. Each one carries whether `management.endpoints.web.exposure.include`/`exclude` publish it over HTTP, read the way Spring Boot reads them (default `health` only, `*`, exclusion first, ids compared ignoring case, dashes and dots); an endpoint the configuration does not expose stays listed and reads as "not exposed over HTTP", and one whose exposure depends on an unresolved placeholder as "exposure unknown". A project endpoint redeclaring a built-in id replaces it, and built-in ids still synthesize no `management.endpoint.<id>.*` keys (#476)
 - fix: Count every request a test sends to an endpoint as its usage, as the endpoint gutter "Navigate To Endpoint Usage" and the MCP `testUrlReferences` list them: a MockMvc request to any host - it is dispatched inside the JVM, and a multi-tenant test names the host on purpose - and a request through `java.net.http`, `RestTemplate`, `TestRestTemplate` or `RestClient` to this machine, as a `RANDOM_PORT` test sends it. A real client calling another host still calls another service, and a `WebTestClient` keeps the same rule because where it is bound is decided where it is built; strings in a test that are not sent anywhere are not read (#467)
 - fix: Find the tests that send a request to an endpoint through a URL they build - a Kotlin string template such as `"/api/items/$id"`, a Java concatenation such as `"/api/items/" + id`, or a `URI.create(...)` / `new URI(...)` passed to MockMvc - in the endpoint gutter and in the call trace of the Spring MCP tools. Every part known only at run time stands for one path segment; a URL naming another host still addresses no endpoint (#463)
@@ -147,7 +120,6 @@ This fork focuses on a few clear priorities:
 - fix: Inject the regular expression of a `@RequestMapping` path built by concatenation into the literal that actually contains it
 
 ### Spring MCP
-
 - fix: See a bean method passed as a callable reference in the endpoint contract and the call trace: `input.use(validator::validate)`, `names.forEach(store::save)` and `this::helper` are invoked by the function they are passed to, but both `serviceCalls` and the trace's `callsInto` read written-out calls only, so the validator was missing from both. A Kotlin or Java method reference now counts as a call at its own line - on an injected bean, through a local copy too, in `serviceCalls`; as a `PROJECT`, `INTERNAL` or `EXTERNAL` call in the trace - while a reference qualified by a type (`String::trim`, `Store::size`) has no instance and is never taken for a bean, and a constructor or property reference is not a call, as a constructor call or a property read is not (#488)
 - fix: List a call on a local copy of an injected bean among the endpoint contract's `serviceCalls`, and as an `EXTERNAL` leaf of the call trace when the bean is a library type: Kotlin code copies a nullable bean into a `val` to smart-cast it (`val stats = statsService ?: throw …`, `val s = statsService!!`, or a plain copy checked for null), and those calls - often the service that answers the request - were missing. A Kotlin `var`, a reassigned Java local and an elvis with a fallback value are not copies (#485)
 - fix: Reject an unknown filter value of the Spring MCP tools with the list of valid values instead of answering with nothing: `endpointType` of `explyt_get_spring_http_endpoints` (including the formerly advertised `SPRING_BOOT`, which never matched), `httpMethod` of the find and contract tools, and `beanType`/`source` of the bean tools. An empty list read as "this project has no Actuator endpoints" to an agent whose schema still offered `SPRING_BOOT`. Every such value is matched case-insensitively, `explyt_find_spring_bean`'s `source` included (#485)
@@ -179,7 +151,6 @@ This fork focuses on a few clear priorities:
 - fix: Make `explyt_find_spring_bean` stop stating facts its model never established. A static snapshot now reads `@Primary` from the declaration, so a primary bean resolves instead of reporting `AMBIGUOUS`, and folds the positional `@Bean({"a", "b"})` form into one bean instead of two records sharing an id; a `@Qualifier` matches a `@Bean @Qualifier("utc")` declaration, not only bean names; a Java `@Nullable` or nullable Kotlin field is optional; a collection on a field or setter is required, since Spring supplies an empty one only to the constructor or factory it calls; a Kotlin `List`/`ObjectProvider` of an interface keeps its element type instead of answering `INDETERMINATE`; lambda and `catch` parameters are no longer taken for injection points, and a position is resolved against the committed document. A recorded context reports an alias it did not export as `INDETERMINATE` rather than `NONE`, recovers the aliases a matching `@Bean` declares, and marks library and unrecognised beans as `LIBRARY`/`UNKNOWN` instead of `COMPONENT`. `explyt_get_project_beans_by_spring_boot_application` rows now name the model that answered (`source`, `contextId`, `limitations`), an error response stays within `maxChars`, descriptions name the input `source` separately from the response `model.source` and the JPA default of `tableName`, and the application lookup waits for indexing instead of failing
 
 ### Other
-
 - fix: Keep a repeated action in the Sentry trail when unrecorded editor input separates it from the first, and count suppressed repeats in the collapsed breadcrumb
 - fix: Do not freeze the UI on the first action after the IDE starts: error-reporting setup no longer runs while an action is being recorded (#307)
 - fix: Keep Sentry action breadcrumbs useful by dropping editor typing and caret movement, recording a repeated action once, and trimming a captured report to the actions that led to it
@@ -187,10 +158,9 @@ This fork focuses on a few clear priorities:
 - docs: Correct the contributor quickstart, which named the wrong sandbox IDE and JDK: since 2025.3 IntelliJ IDEA is a single unified distribution, so `253` and newer build against it rather than against Community
 - chore: Drop the `defaultIdeaType` property and its sixteen unused declarations, inert since the platform dependency stopped taking an edition argument on `253`
 
-## 262.34.101 - 2026-08-19
+## [262.34.101] - 2026-08-19
 
 ### Spring Core
-
 - fix: Keep renamed Spring Boot run configurations linked without ambiguous fallback (#229) (#279)
 - fix: Keep Kotlin top-level `main()` projects linked when the stored run configuration name no longer exists (#229)
 - fix: Restore Spring project links when a run configuration is renamed or replaced outside the IDE, such as by a version-control update (#229)
@@ -226,21 +196,17 @@ This fork focuses on a few clear priorities:
 - fix: Resolve property keys consumed only from a dependency module (#276)
 
 ### Spring Data
-
 - fix: Fail closed on stale PSI in SQL injector (#235) (#242)
 
 ### Spring Web
-
 - fix: EDT while navigation (#227)
 - fix: Load HTTP environment JSON PSI asynchronously off EDT (#237) (#239) (#279)
 
 ### Spring MCP
-
 - fix: Paginate `explyt_get_spring_http_endpoints` results and preserve total-count metadata (#244) (#279)
 - fix: Keep MCP tools working on Kotlin light and synthetic PSI without a source range, omitting `line` when no declaration can be pointed at (#281)
 
 ### Other
-
 - ci: Pin the Sentry release action and restrict release-job permissions (#230) (#279)
 - ci: Ignore PLUGIN_STRUCTURE_WARNINGS
 - chore: Configure Plugin Verifier
@@ -254,24 +220,20 @@ This fork focuses on a few clear priorities:
 ## 261.33.80 - 2026-04-28
 
 ### Spring Core
-
 - feat: 261 spring boot support (#217)
 - feat: Spring Mock/Spy beans in test #209 (#211)
 - fix: Redundant line marker under `@Value` constructor (#210)
 
 ### Spring Initializr
-
 - fix: Spring Init (#218)
 
 ### Spring MCP
-
 - feat: MCP Tool `explyt_get_spring_data_entities` (#222)
 - feat: MCP Tools `explyt_get_spring_http_endpoints` and `explyt_get_spring_endpoint_contract` (#221)
 - feat: MCP Tool `explyt_trace_spring_call_chain` (#220)
 - feat: MCP Tool `explyt_find_spring_endpoint` (#219)
 
 ### Other
-
 - fix: EDT #213 (#214)
 - chore: Support 261 (#192)
 - chore: Prepare release 33
@@ -358,47 +320,37 @@ This fork focuses on a few clear priorities:
 ## 252.28.37 - 2025-11-05
 
 ### Spring Core/Boot
-
 - fix: configuration properties field should not be autowired
 
 ### Spring Initialzr
-
 - fix: download indicator exception
 
 ### Spring Debugger
-
 - feat: Spring Remote Debugger
 
 ### Docker
-
 - feat: env variables completion in docker compose files
 
 ### SQL
-
 - feat: introduce basic SQL DML support (no plugin required)
 
 ### Other
-
 - chore: Update plugin name to Spring Explyt
 - fix: Remove internal API usages and access to FUS
 
 ## 252.27.26 - 2025-10-02
 
 ### Spring Core/Boot
-
 - fix: log pattern error & additional bean search
 - fix: Race error in case if several inspections were started at once
 
 ### Spring AI
-
 - feat: AI add action Entity to DB Script
 
 ### Spring Data
-
 - feat: JDBC client inspections (#68)
 
 ### Spring Debugger
-
 - feat: Spring Debugger runtime property - code vision
 - feat: Spring Debugger show server Web URL in console
 - chore: Update debugger hint icon
@@ -406,90 +358,73 @@ This fork focuses on a few clear priorities:
 ## 252.26.18 - 2025-09-18
 
 ### Spring Core/Boot
-
 - feat: Support Spring 7: Bean Registrar
 
 ### Spring AI
-
 - fix: ai prompts
 
 ### Spring Data
-
 - feat: JDBC client params navigation & inspections
 
 ## 252.25.15 - 2025-09-05
 
 ### Spring AI
-
 - feat: Explyt AI integration
 
 ### Spring Core/Boot
-
 - feat: library beans DI support
-- feat: Scheduled cron's zone attribute support 
-- fix: Property definition inspection 
+- feat: Scheduled cron's zone attribute support
+- fix: Property definition inspection
 - fix: property cache (#74)
 - fix: ConditionalOnMissingBeanStrategy - method from the same class (#76)
 
 ### Spring Data
-
 - JPA generate equals & hashCode methods
 
 ### Spring Web / OpenApi
-
 - fix: Spring web parse url
 
 ### Spring Debugger
-
 - Improve spring debugger node
 
 ## 252.24.11 - 2025-08-15
 
 ### Spring Core/Boot
-
 - Add an icon to the "Mark directory as Spring Configuration Root" action
 - fix: Maps with string key/value in properties wasn't resolved
 - fix: settings ref for agent mode #59
 - fix: various EDT issues
 
 ### Spring Web / OpenApi
-
 - fix: Use the correct server port
 
 ### HttpClient
-
 - feat: HTTP completion in .http files
 
 ### Spring Debugger
-
 - feat: revert gradle configuration after debug
 - fix: remove setStoreExternally for debugger
 - fix: Debugger run configuration - empty map is immutable
 
 ### Other
-
 - fix: 252 only! remove same warnings (#61)
 
 ## 252.23.8 - 2025-08-05
 
 ### Spring Core/Boot
-
 - feat: Spring Debugger
-- feat: Mark/unmark folder as Spring Configuration Root 
+- feat: Mark/unmark folder as Spring Configuration Root
 - fix: Invalid references when there are comment and placeholder arguments (#47)
 - fix: Only first object referenced without warning in properties for fields with the same type in @ConfigurationProperties
 - fix: Various bug fixes
 
 ### Spring Web / OpenApi
-
 - feat: Support latest OpenApi in swagger-ui (#50)
 
 ### Spring Data
-
 - feat: Mark some strings as SQL (#54)
 
 ### Other
-
 - fix: Error reporting issues
 - fix: Invalid injection host exception (#51)
 - chore: support 252
@@ -497,87 +432,71 @@ This fork focuses on a few clear priorities:
 ## 251.22.6 - 2025-06-09
 
 ### Quarkus
-
 - feat: Detect Quarkus endpoints in the Endpoint panel
 - fix: Various bug fixes
 
 ### Spring Core/Boot
-
 - fix: Minor fixes
 
 ### Other
-
 - feat: Add Spring tool for the Explyt AI platform
 - fix: GlitchTip error reporting
 
 ## 251.1.15986533443 - 2025-07-01
 
 ### Quarkus
-
 - Feature: Support Quarkus DI (#34)
 
 ### Spring Core/Boot
-
 - feat: application.yaml enum key error (#32)
 
 ### Spring Initializr
-
 - fix: since 2025.1 (251) DownloadHandler in JCefBrowser does not work (#35)
 - chore: display verbose errors while Spring Project creation
 
 ### Other
-
 - feat: 2025.2 (252) initial support
 - chore: migrate from sentry to glichtip
 
 ## 251.1.3531 - 2025-04-17
 
 ### Spring Core/Boot
-
 - Added: SPI bean navigation support (#29)
 - Added: Support properties mapped to Map<Enum, V> (#28)
 - Fixed: generic bean navigation for beans with java fragments
 - Fixed: escape command line to start javaagent
 
 ### Spring Web / OpenApi
-
 - Added: add to an openapi file all possible servers and ports from configs
 - Fixed: optimize endpoints search
 - Fixed: optimize editing of temporal openapi files
 
 ### Other
-
 - HttpClient: added variable and line comment support in http files. (#26)
 - Improve test build
 
 ## 243.1.3438 - 2025-03-25
 
 ### Spring Core/Boot
-
 - Added: migrate agent to declarative-bytecode-patcher
 
 ### Other
-
 - Fixed: various bugfixes
 
 ## 243.1.3391 - 2025-03-14
 
 ### Spring Core/Boot
-
 - Added: use -javaagent for getting spring context
 
 ### Http Client
-
 - Added: Baseline HTTP parser + lexer + syntax highlighter. (#23)
 
 ### Spring Data
-
 - Fixed: sql was tried to be injected in invalid places
 
 ## 243.1.3351 - 2025-02-20
 
 ### Spring Data
-
 - Added: Support inject sql to `sql` named parameter functions (#16)
 
 ## 243.1.3333 - 2025-02-11
@@ -617,7 +536,7 @@ This fork focuses on a few clear priorities:
 ### Spring Core/Boot
 
 - Fixed: Properties: quick-fix to kebab-case didn't work
-- Fixed: Show correct linemarkers in library files with an enabled Spring Boot panel. 
+- Fixed: Show correct linemarkers in library files with an enabled Spring Boot panel.
 
 ### Spring Web / OpenAPI
 
@@ -630,7 +549,7 @@ This fork focuses on a few clear priorities:
 ### Other
 
 - Added: Kotlin Run Configuration can be linked to Explyt Spring Boot Panel
-- Added: Show progress while collecting project's endpoints in the Spring Endpoints panel 
+- Added: Show progress while collecting project's endpoints in the Spring Endpoints panel
 - Added: Sync project with the Explyt Spring Boot panel using linemarker on @SpringBootApplication
 
 ## 243.1.3083 - 2024-12-29
@@ -825,7 +744,7 @@ This fork focuses on a few clear priorities:
 
 ### Other
 
-- compatibility with internal 242 api 
+- compatibility with internal 242 api
 - gradle kotlin module test problem
 - Add error tracking via Sentry setup
 
