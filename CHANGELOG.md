@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [253.1.1] - 2026-11-07
+
 ### Spring Core
 - fix: Stop the bundled YAML inspection from reporting `The type of value is 'boolean' while other values use type 'string'` in Spring configuration files: it compares the YAML scalar types of the same key across list items, so `enabled: true` next to `enabled: "${FLAG:false}"` was flagged although Spring converts both to the declared `Boolean`. The value is still validated against the property type by the Spring YAML inspection (#492)
 - fix: Stop reporting "Spring meta-annotation should have RUNTIME RetentionPolicy" on a Kotlin annotation class that is retained at runtime — with `@Retention(AnnotationRetention.RUNTIME)` or with no `@Retention` at all, whose Kotlin default is `RUNTIME`: the policy was compared as reference text with `RetentionPolicy.RUNTIME`, which the Kotlin light class does not carry, so every Kotlin composed annotation such as a custom `@ConditionalOnProperty` was an error. The policy is now resolved to its enum constant, a Kotlin annotation meta-annotated by another Kotlin annotation is checked through it as in Java, and meta-annotation cycles no longer recurse forever (#490)
