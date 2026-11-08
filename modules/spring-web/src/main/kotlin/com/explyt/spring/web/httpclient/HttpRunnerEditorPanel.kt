@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.dsl.builder.AlignX
@@ -29,6 +30,7 @@ class HttpRunnerEditorPanelProvider : EditorNotificationProvider {
     override fun collectNotificationData(
         project: Project, file: VirtualFile
     ): Function<FileEditor, HttpRunnerEditorPanel>? {
+        file.toNioPathOrNull() ?: return null
         return if (file.name.endsWith(".http") || file.name.endsWith(".rest")) {
             if (ScratchUtil.isScratch(file)) return null
             Function { fileEditor: FileEditor -> HttpRunnerEditorPanel(fileEditor, project) }
