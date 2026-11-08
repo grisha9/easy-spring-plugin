@@ -8,7 +8,7 @@ This fork is based on the original project by [explyt](https://github.com/explyt
 
 This fork focuses on a few clear priorities:
 
-- **Lightweight** — keep the plugin small, and unobtrusive in the IDE.
+- **Lightweight** — keep the plugin small and not interfere with work in the IDE.
 - **Simple and fast** — simple implementation and only the essential core functionality.
 - **Minimal AI slop** — avoid unnecessary AI-generated boilerplate, noise, and over-engineered code. Changes should be intentional, readable, and reviewed.
 
