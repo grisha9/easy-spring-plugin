@@ -5,7 +5,6 @@
 
 package com.explyt.spring.core.debug
 
-import com.explyt.plugin.PluginIds
 import com.explyt.spring.core.externalsystem.utils.EXPLYT_AGENT_JAR
 import com.explyt.spring.core.externalsystem.utils.NativeBootUtils
 import com.explyt.spring.core.runconfiguration.SpringToolRunConfigurationsSettingsState
@@ -60,8 +59,6 @@ class SpringDebuggerRunConfigurationExtension : RunConfigurationExtension() {
     }
 
     override fun isApplicableFor(configuration: RunConfigurationBase<*>): Boolean {
-        if (PluginIds.SPRING_DEBUGGER_JB.isEnabled()) return false
-
         if (!SpringToolRunConfigurationsSettingsState.getInstance().isDebugMode) return false
         return configuration is ApplicationConfiguration
                 || configuration is JavaRunConfigurationBase
