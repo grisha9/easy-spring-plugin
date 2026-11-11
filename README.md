@@ -1,4 +1,5 @@
-# Spring Plugin — Lightweight Fork
+Easy Spring. IntelliJ Plugin [page](https://plugins.jetbrains.com/plugin/35905-easy-spring)
+==================
 
 A lightweight fork of the [Spring plugin for IntelliJ IDEA](https://github.com/explyt/spring-plugin), maintained at [grisha9/spring-plugin](https://github.com/grisha9/spring-plugin).
 
@@ -18,5 +19,3 @@ This fork focuses on a few clear priorities:
 - The main goal is the Pareto principle.
 - Faster startup and lower overhead where possible.
 - Handwritten, focused changes over generated filler.
-
-## Building from source
