@@ -8,10 +8,7 @@ package com.explyt.spring.web.loader
 import com.explyt.spring.core.properties.FoldedPropertyValue
 import com.explyt.spring.test.ExplytJavaLightTestCase
 import com.explyt.spring.test.TestLibrary
-import com.explyt.spring.web.providers.ControllerEndpointActionsLineMarkerProvider
-import com.explyt.spring.web.providers.EndpointIconGutterHandler
-import com.explyt.spring.web.providers.EndpointRunLineMarkerProvider
-import com.explyt.spring.web.providers.RunInSwaggerAction
+import com.explyt.spring.web.providers.*
 import com.explyt.spring.web.service.SpringWebEndpointsSearcher
 import com.explyt.spring.web.util.SpringWebUtil
 import com.intellij.codeInsight.daemon.LineMarkerInfo
@@ -134,6 +131,20 @@ class MappingPathPlaceholderEndpointTest : ExplytJavaLightTestCase() {
         val info = EndpointRunLineMarkerProvider().getInfo(method.nameIdentifier!!)
         val action = info?.actions?.filterIsInstance<RunInSwaggerAction>()?.single()
             ?: error("Expected a Run in Swagger marker on the handler")
+
+        assertEquals(listOf("/l/{code}"), action.endpointPaths())
+    }
+
+    /** The controller-level marker builds its endpoints lazily, on click, and has to resolve the placeholder too. */
+    fun testControllerRunInSwaggerMarkerRequestsTheResolvedPath() {
+        addConfiguration("application.yml", "app:\n  shortener-path: /l\n")
+        addController()
+        val psiClass = JavaPsiFacade.getInstance(project)
+            .findClass("com.example.RedirectController", GlobalSearchScope.allScope(project))!!
+
+        val info = ControllerRunLineMarkerProvider().getInfo(psiClass.nameIdentifier!!)
+        val action = info?.actions?.filterIsInstance<RunInSwaggerAction>()?.single()
+            ?: error("Expected a Run in Swagger marker on the controller")
 
         assertEquals(listOf("/l/{code}"), action.endpointPaths())
     }

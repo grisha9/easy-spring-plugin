@@ -79,9 +79,7 @@ class SpringBeanIncorrectAutowiringInspection : SpringBaseUastLocalInspectionToo
         if (!SpringCoreUtil.isSpringBeanCandidateClass(aClass)) return ProblemDescriptor.EMPTY_ARRAY
 
         var problems = emptyArray<ProblemDescriptor>()
-        if (!isBeanExist(module, aClass)) {
-            problems += getProblemByClassWithoutComponent(aClass, manager, isOnTheFly)
-        } else {
+        if (isBeanExist(module, aClass)) {
             problems += getProblemConstructors(aClass, module, manager, isOnTheFly)
             for ((method, descriptorElement) in getAutowiredMethodsToInspect(aClass)) {
                 val params = method.parameterList.parameters
@@ -345,36 +343,6 @@ class SpringBeanIncorrectAutowiringInspection : SpringBaseUastLocalInspectionToo
         return problems
     }
 
-    private fun getProblemByClassWithoutComponent(
-        aClass: PsiClass,
-        manager: InspectionManager,
-        isOnTheFly: Boolean
-    ): Array<ProblemDescriptor> {
-        var problems = emptyArray<ProblemDescriptor>()
-
-        val fields = aClass.fields
-            .filter { it.isInjectOrAutowiredByRequiredTrue() }
-            .map { it as PsiNameIdentifierOwner }.toSet()
-        val methods = aClass.methods
-            .filter { it.isInjectOrAutowiredByRequiredTrue() }
-            .map { it as PsiNameIdentifierOwner }.toSet()
-        val elements = fields + methods
-
-        if (elements.isNotEmpty() && (aClass.nameIdentifier != null)) {
-            elements.map {
-                val identifier = getIdentifyingElement(it) ?: return@map
-                problems += manager.createProblemDescriptor(
-                    identifier,
-                    SpringCoreBundle.message("explyt.spring.inspection.class.without.component"),
-                    isOnTheFly,
-                    emptyArray(),
-                    ProblemHighlightType.GENERIC_ERROR
-                )
-            }
-        }
-        return problems
-    }
-
     private fun getWarningMessageInheritor(
         module: Module,
         beanCandidates: List<PsiMember>,
@@ -388,14 +356,6 @@ class SpringBeanIncorrectAutowiringInspection : SpringBaseUastLocalInspectionToo
             .sorted().joinTo(message, " <br>")
         message.append("</td></tr></table></td></tr></table></html>")
         return message.toString()
-    }
-
-    private fun checkBeans(beanDeclarations: List<PsiMember>): Boolean {
-        when {
-            beanDeclarations.size == 1 -> return true
-            beanDeclarations.count { it.isMetaAnnotatedBy(SpringCoreClasses.PRIMARY) } == 1 -> return true
-        }
-        return false
     }
 
     private fun PsiModifierListOwner.isInjectOrAutowiredByRequiredTrue(): Boolean {

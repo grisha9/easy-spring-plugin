@@ -122,20 +122,10 @@ class SpringBeanIncorrectAutowiringInspectionTest : ExplytInspectionKotlinTestCa
             class BarBean
             open class FooBean
 
-            open class FooBeanClass {
-                @Autowired
-                var <error descr="Must be defined in valid Spring bean (@Component|@Service|...)">bean</error>: FooBean? = null
-            }
-
             @Configuration
             open class ConfigurationBean {
                 @Bean
                 open fun createBean(): ClassBeanExist = ClassBeanExist()
-            }
-
-            open class ClassNotBeanExist {
-                @Autowired
-                var <error descr="Must be defined in valid Spring bean (@Component|@Service|...)">injectBean</error>: InjectBean? = null
             }
 
             open class ClassBeanExist {
