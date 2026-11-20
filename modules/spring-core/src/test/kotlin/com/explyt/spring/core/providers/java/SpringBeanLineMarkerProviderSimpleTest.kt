@@ -12,6 +12,7 @@ import com.explyt.spring.test.TestLibrary
 import com.explyt.spring.test.util.SpringGutterTestUtil.getAllBeanGuttersByIcon
 import com.explyt.spring.test.util.SpringGutterTestUtil.getGutterTargetString
 import junit.framework.TestCase
+import org.intellij.lang.annotations.Language
 
 private const val TEST_DATA_PATH = "providers/linemarkers/beans"
 
@@ -137,7 +138,8 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytJavaLightTestCase() {
         val allBeanGutters = getAllBeanGuttersByIcon(myFixture, icons)
         val gutterTargetString = getGutterTargetString(allBeanGutters)
 
-        TestCase.assertEquals(gutterTargetString
+        TestCase.assertEquals(
+            gutterTargetString
             .filter { it.size == 1 }
             .flatMap { gutter ->
                 gutter.filter {
@@ -237,7 +239,7 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytJavaLightTestCase() {
         val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBean)
         val gutterTargetString = getGutterTargetString(allBeanGutters)
 
-        TestCase.assertTrue(gutterTargetString.flatMap { it }.all { it == "foo()" })
+        assertTrue(gutterTargetString.flatten().all { it == "foo()" })
     }
 
     fun testNoLineMarkerOnConstructorParam() {
@@ -256,5 +258,19 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytJavaLightTestCase() {
         val allBeanGutters = myFixture.findAllGutters()
             .filter { it.icon == SpringIcons.SpringBeanDependencies }
         assertTrue(allBeanGutters.isEmpty())
+    }
+
+    fun testBeanDependenciesLineMarker_AutowiredInEmptyClass() {
+        @Language("JAVA") val code = """  
+                public class FooComponent {
+                    @${SpringCoreClasses.AUTOWIRED}
+                    private String stringBean;                                     
+                }
+            """
+        myFixture.configureByText("FooComponent.java", code.trimIndent())
+        myFixture.doHighlighting()
+
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBeanDependencies)
+        assertFalse(allBeanGutters.isEmpty())
     }
 }

@@ -6,11 +6,7 @@
 package com.explyt.spring.web.providers
 
 import com.explyt.spring.web.httpclient.action.HttpRunFileAction
-import com.explyt.spring.web.language.http.psi.HttpRequest
-import com.explyt.spring.web.language.http.psi.HttpRequestLine
-import com.explyt.spring.web.language.http.psi.HttpRequestTarget
-import com.explyt.spring.web.language.http.psi.HttpTypes
-import com.explyt.spring.web.language.http.psi.HttpVariable
+import com.explyt.spring.web.language.http.psi.*
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
@@ -27,8 +23,8 @@ class HttpRunLineMarkerProvider : RunLineMarkerContributor() {
 
         val convertedElement = when (leafElement.tokenType) {
             HttpTypes.REQUEST_TARGET_VALUE -> psiElement
-            HttpTypes.IDENTIFIER           -> leafElement.parentOfType<HttpVariable>() ?: return null
-            else                           -> return null
+            HttpTypes.IDENTIFIER -> leafElement.parentOfType<HttpVariable>() ?: return null
+            else -> return null
         }
 
         val httpRequestTargetElement = convertedElement.parentOfType<HttpRequestTarget>() ?: return null

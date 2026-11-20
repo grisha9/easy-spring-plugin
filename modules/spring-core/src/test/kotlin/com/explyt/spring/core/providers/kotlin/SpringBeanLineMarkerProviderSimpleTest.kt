@@ -10,7 +10,9 @@ import com.explyt.spring.core.SpringIcons
 import com.explyt.spring.test.ExplytKotlinLightTestCase
 import com.explyt.spring.test.TestLibrary
 import com.explyt.spring.test.util.SpringGutterTestUtil
+import com.explyt.spring.test.util.SpringGutterTestUtil.getAllBeanGuttersByIcon
 import junit.framework.TestCase
+import org.intellij.lang.annotations.Language
 
 private const val TEST_DATA_PATH = "providers/linemarkers/beans"
 
@@ -30,22 +32,22 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         myFixture.doHighlighting()
 
         val icons = setOf(SpringIcons.SpringBean, SpringIcons.springBeanInactive)
-        val allBeanGutters = SpringGutterTestUtil.getAllBeanGuttersByIcon(myFixture, icons)
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, icons)
         val gutterTargetString = allBeanGutters.asSequence()
             .map { SpringGutterTestUtil.getGutterTargetsStrings(it) }
             .filter { it.isNotEmpty() }
             .toList()
 
-        TestCase.assertTrue(allBeanGutters.isNotEmpty())
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        assertTrue(allBeanGutters.isNotEmpty())
+        TestCase.assertEquals(1, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooAOneBeanOneDependency", true) }
-        }.size, 1)
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        }.size)
+        TestCase.assertEquals(0, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooBOneBeanOneDependency", true) }
-        }.size, 0)
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        }.size)
+        TestCase.assertEquals(1, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooCOneBeanOneDependency", true) }
-        }.size, 1)
+        }.size)
     }
 
     fun testLineMarkerOneBeanOneDependency_toBean() {
@@ -62,16 +64,16 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
             .filter { it.isNotEmpty() }
             .toList()
 
-        TestCase.assertTrue(allBeanGutters.isNotEmpty())
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        assertTrue(allBeanGutters.isNotEmpty())
+        TestCase.assertEquals(2, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooAOneBeanOneDependency", true) }
-        }.size, 2)
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        }.size)
+        TestCase.assertEquals(0, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooBOneBeanOneDependency", true) }
-        }.size, 0)
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        }.size)
+        TestCase.assertEquals(1, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooCOneBeanOneDependency", true) }
-        }.size, 1)
+        }.size)
     }
 
     fun testLineMarkerOneBeanTwoDependency_toAutowired() {
@@ -88,9 +90,9 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
             .filter { it.isNotEmpty() }
             .toList()
 
-        TestCase.assertTrue(allBeanGutters.isNotEmpty())
+        assertTrue(allBeanGutters.isNotEmpty())
         for (gutter in gutterTargetString) {
-            TestCase.assertEquals(gutter.filter { it.contains("foo", true) }.size, 2)
+            TestCase.assertEquals(2, gutter.filter { it.contains("foo", true) }.size)
         }
     }
 
@@ -108,10 +110,10 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
             .filter { it.isNotEmpty() }
             .toList()
 
-        TestCase.assertTrue(allBeanGutters.isNotEmpty())
+        assertTrue(allBeanGutters.isNotEmpty())
 
         for (gutter in gutterTargetString) {
-            TestCase.assertEquals(gutter.filter { it.contains("foo", true) }.size, 1)
+            TestCase.assertEquals(1, gutter.filter { it.contains("foo", true) }.size)
         }
     }
 
@@ -129,10 +131,10 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
             .filter { it.isNotEmpty() }
             .toList()
 
-        TestCase.assertTrue(allBeanGutters.isNotEmpty())
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        assertTrue(allBeanGutters.isNotEmpty())
+        TestCase.assertEquals(3, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooFormatter", true) }
-        }.size, 3)
+        }.size)
     }
 
     fun testLineMarker_toBean() {
@@ -149,10 +151,10 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
             .filter { it.isNotEmpty() }
             .toList()
 
-        TestCase.assertTrue(allBeanGutters.isNotEmpty())
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        assertTrue(allBeanGutters.isNotEmpty())
+        TestCase.assertEquals(3, gutterTargetString.flatMap { gutter ->
             gutter.filter { it.contains("fooFormatter", true) }
-        }.size, 3)
+        }.size)
     }
 
     fun testLineMarkerByBeanName_toAutowired() {
@@ -163,18 +165,16 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         myFixture.doHighlighting()
 
         val icons = setOf(SpringIcons.SpringBean, SpringIcons.springBeanInactive)
-        val allBeanGutters = SpringGutterTestUtil.getAllBeanGuttersByIcon(myFixture, icons)
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, icons)
         val gutterTargetString = SpringGutterTestUtil.getGutterTargetString(allBeanGutters)
 
-        TestCase.assertEquals(gutterTargetString
-            .filter { it.size == 1 }
-            .flatMap { gutter ->
-                gutter.filter {
-                    it.contains("namedBeanFoo", true)
-                            || it.contains("foo", true)
-                }
-            }.size,
-            2
+        TestCase.assertEquals(
+            2,
+            gutterTargetString
+                .filter { it.size == 1 }
+                .flatMap { gutter ->
+                    gutter.filter { it.contains("namedBeanFoo", true) || it.contains("foo", true) }
+                }.size
         )
     }
 
@@ -185,15 +185,15 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         myFixture.configureFromExistingVirtualFile(vf)
         myFixture.doHighlighting()
 
-        val allBeanGutters = SpringGutterTestUtil.getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBeanDependencies)
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBeanDependencies)
         val gutterTargetString = SpringGutterTestUtil.getGutterTargetString(allBeanGutters)
 
-        TestCase.assertEquals(gutterTargetString.flatMap { gutter ->
+        TestCase.assertEquals(5, gutterTargetString.flatMap { gutter ->
             gutter.filter {
                 it.contains("namedBeanFoo", true)
                         || it.contains("foo", true)
             }
-        }.size, 5)
+        }.size)
     }
 
     fun testLineMarkerResource_toAutowired() {
@@ -212,11 +212,11 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         )
         myFixture.doHighlighting()
 
-        val allBeanGutters = SpringGutterTestUtil.getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBean)
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBean)
         val gutterTargetString = SpringGutterTestUtil.getGutterTargetString(allBeanGutters)
 
         TestCase.assertEquals(
-            gutterTargetString.flatMap { gutter -> gutter.filter { it == "e" } }.size, 1
+            1, gutterTargetString.flatMap { gutter -> gutter.filter { it == "e" } }.size
         )
     }
 
@@ -236,11 +236,11 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         )
         myFixture.doHighlighting()
 
-        val allBeanGutters = SpringGutterTestUtil.getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBeanDependencies)
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBeanDependencies)
         val gutterTargetString = SpringGutterTestUtil.getGutterTargetString(allBeanGutters)
 
         TestCase.assertEquals(
-            gutterTargetString.flatMap { gutter -> gutter.filter { it == "E" } }.size, 1
+            1, gutterTargetString.flatMap { gutter -> gutter.filter { it == "E" } }.size
         )
     }
 
@@ -263,10 +263,10 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         )
         myFixture.doHighlighting()
 
-        val allBeanGutters = SpringGutterTestUtil.getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBean)
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBean)
         val gutterTargetString = SpringGutterTestUtil.getGutterTargetString(allBeanGutters)
 
-        TestCase.assertTrue(gutterTargetString.flatten().all { it == "foo()" })
+        assertTrue(gutterTargetString.flatten().all { it == "foo()" })
     }
 
     fun testNoLineMarkerOnConstructorParam() {
@@ -280,5 +280,19 @@ class SpringBeanLineMarkerProviderSimpleTest : ExplytKotlinLightTestCase() {
         val allBeanGutters = myFixture.findAllGutters()
             .filter { it.icon == SpringIcons.SpringBeanDependencies }
         assertTrue(allBeanGutters.isEmpty())
+    }
+
+    fun testBeanDependenciesLineMarker_AutowiredInEmptyClass() {
+        @Language("kotlin") val code = """  
+                class FooComponent {
+                    @${SpringCoreClasses.AUTOWIRED}
+                    lateinit var stringBean: String                                     
+                }
+            """
+        myFixture.configureByText("FooComponent.kt", code.trimIndent())
+        myFixture.doHighlighting()
+
+        val allBeanGutters = getAllBeanGuttersByIcon(myFixture, SpringIcons.SpringBeanDependencies)
+        assertFalse(allBeanGutters.isEmpty())
     }
 }

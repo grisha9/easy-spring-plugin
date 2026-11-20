@@ -349,20 +349,18 @@ object SpringWebUtil {
         val controllerName = psiClass.name ?: return null
 
         val requestMappingMah = MetaAnnotationsHolder.of(module, REQUEST_MAPPING)
-        val path = requestMappingMah.getAnnotationMemberValues(psiMethod, setOf("path", "value")).asSequence()
-            .mapNotNull { AnnotationUtil.getStringAttributeValue(it) }
-            .firstOrNull() ?: ""
+        val path = requestMappingMah.getAnnotationValues(uMethod, setOf("path", "value")).asSequence()
+            .firstNotNullOfOrNull { it.evaluateString() } ?: ""
         if (isAbsolutePath(path)) return null
-        val produces = requestMappingMah.getAnnotationMemberValues(psiMethod, setOf("produces"))
-            .mapNotNull { AnnotationUtil.getStringAttributeValue(it) }
-        val consumes = requestMappingMah.getAnnotationMemberValues(psiMethod, setOf("consumes"))
-            .mapNotNull { AnnotationUtil.getStringAttributeValue(it) }
+        val produces = requestMappingMah.getAnnotationValues(uMethod, setOf("produces"))
+            .mapNotNull { it.evaluateString() }
+        val consumes = requestMappingMah.getAnnotationValues(uMethod, setOf("consumes"))
+            .mapNotNull { it.evaluateString() }
 
         val fullPath = simplifyUrl(MappingPathPlaceholders.resolve(module, "$prefix/${removeParams(path)}"))
 
-        val requestMethods =
-            requestMappingMah.getAnnotationMemberValues(psiMethod, setOf("method"))
-                .map { it.text.split('.').last() }
+        val requestMethods = requestMappingMah.getAnnotationValues(uMethod, setOf("method"))
+            .mapNotNull { (it as? UQualifiedReferenceExpression)?.resolvedName }
 
         val description = uMethod.comments.firstOrNull()?.getCommentText() ?: ""
         val returnType = uMethod.returnType

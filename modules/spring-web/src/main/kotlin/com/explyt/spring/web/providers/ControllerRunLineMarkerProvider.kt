@@ -12,12 +12,12 @@ import com.explyt.spring.web.editor.openapi.OpenApiUtils
 import com.explyt.spring.web.editor.openapi.OpenApiUtils.isAbsolutePath
 import com.explyt.spring.web.util.SpringWebUtil
 import com.explyt.util.ExplytPsiUtil.isMetaAnnotatedBy
-import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.uast.UClass
+import org.jetbrains.uast.evaluateString
 import org.jetbrains.uast.getUParentForIdentifier
 
 class ControllerRunLineMarkerProvider : RunLineMarkerContributor() {
@@ -34,19 +34,18 @@ class ControllerRunLineMarkerProvider : RunLineMarkerContributor() {
         val isController = psiClass.isMetaAnnotatedBy(SpringWebClasses.CONTROLLER)
         val isFeignClient = psiClass.isMetaAnnotatedBy(SpringWebClasses.FEIGN_CLIENT)
         if (!isController && !isFeignClient) return null
-        val requestMappingMah = MetaAnnotationsHolder.of(module, SpringWebClasses.REQUEST_MAPPING)
 
         val prefixes = if (psiClass.isMetaAnnotatedBy(SpringWebClasses.REQUEST_MAPPING)) {
-            requestMappingMah.getAnnotationMemberValues(psiClass, setOf("path", "value"))
-                .mapNotNull { AnnotationUtil.getStringAttributeValue(it) }
+            val requestMappingMah = MetaAnnotationsHolder.of(module, SpringWebClasses.REQUEST_MAPPING)
+            requestMappingMah.getAnnotationValues(uClass, setOf("path", "value"))
+                .mapNotNull { it.evaluateString() }
         } else {
             emptyList()
         }
         val requestMappingServers = prefixes.filter { isAbsolutePath(it) }
         val feignClientServers = if (isFeignClient) {
             val feignClientMah = MetaAnnotationsHolder.of(module, SpringWebClasses.FEIGN_CLIENT)
-            feignClientMah.getAnnotationMemberValues(psiClass, setOf("url"))
-                .mapNotNull { AnnotationUtil.getStringAttributeValue(it) }
+            feignClientMah.getAnnotationValues(uClass, setOf("url")).mapNotNull { it.evaluateString() }
         } else {
             emptyList()
         }

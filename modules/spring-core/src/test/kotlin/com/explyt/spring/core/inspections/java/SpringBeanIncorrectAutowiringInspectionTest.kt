@@ -139,22 +139,12 @@ class SpringBeanIncorrectAutowiringInspectionTest : ExplytInspectionJavaTestCase
             class FooBean {
             }
 
-            class FooBeanClass {
-                @Autowired
-                FooBean <error descr="Must be defined in valid Spring bean (@Component|@Service|...)">bean</error>;
-            }
-
             @Configuration
             class ConfigurationBean {
                 @Bean
                 ClassBeanExist createBean() {
                     return new ClassBeanExist();
                 }
-            }
-
-            class ClassNotBeanExist {
-                @Autowired
-                InjectBean <error descr="Must be defined in valid Spring bean (@Component|@Service|...)">injectBean</error>;
             }
 
             class ClassBeanExist {
