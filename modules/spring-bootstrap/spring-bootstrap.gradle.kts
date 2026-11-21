@@ -212,9 +212,6 @@ changelog {
     version.set(springBootstrapModule.version as String)
     path.set(rootProject.file("CHANGELOG.md").canonicalPath)
     header.set(provider { "[${version.get()}] - ${date()}" })
-    introduction.set(
-        rootProject.file("README.md").readText()
-    )
     itemPrefix.set("-")
     keepUnreleasedSection.set(true)
     unreleasedTerm.set("[Unreleased]")
